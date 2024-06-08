@@ -11,8 +11,7 @@ def subdomains():
     sublist3r = "sublist3r -d " + domain + " | tee Subdomains/sublist3r_result.txt"
     assetfinder = "assetfinder --subs-only " + domain + " | tee Subdomains/assetfinder_result.txt"
     findomain = "findomain -t " + domain + " | tee Subdomains/findomain.txt"
-    dnsx = "dnsx -d " + domain + " -a -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt | tee Subdomains/dnsx_result.txt"
-
+    shosubgo = "shosubgo -d " + domain + " -s ojUJJWDFqszZHHkDTLw5boVgzUjnACzx | tee Subdomains/shosubgo_result.txt"
 
     print("\033[32m====================================================================================")
     print("\033[33m[================================= SubFinder Start =================================]")
@@ -54,14 +53,21 @@ def subdomains():
 
 
 
+
+
     
     print("====================================================================================")
-    print("[================================= DnsX Start  =================================]")
+    print("[================================= shosubgo Start  =================================]")
     print("====================================================================================")
-    os.system(dnsx)
+    os.system(shosubgo)
     print("====================================================================================")
-    print("[================================= DnsX Done =================================]")
+    print("[================================= shosubgo Done =================================]")
     print("====================================================================================")
+
+
+
+
+
 
 
 
@@ -78,7 +84,7 @@ def merge_data():
             merged_file.writelines(merged_lines)
 
 
-    files_to_merge = ['subfinder_result.txt', 'sublist3r_result.txt', 'assetfinder_result.txt','findomain.txt','dnsx_result.txt']
+    files_to_merge = ['subfinder_result.txt', 'sublist3r_result.txt', 'assetfinder_result.txt','findomain.txt', 'shosubgo_result.txt']
     
     print("====================================================================================")
     print("====================================================================================")
@@ -101,6 +107,33 @@ def check_alive():
     print("====================================================================================")
 
 
+
+def last():
+
+    dnsx = "dnsx -d " + domain + " -a -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt | tee Subdomains/dnsx_result.txt"
+
+    print("====================================================================================")
+    print("[================================= DnsX Start  =================================]")
+    print("====================================================================================")
+    os.system(dnsx)
+    print("====================================================================================")
+    print("[================================= DnsX Done =================================]")
+    print("====================================================================================")
+
+    os.system("cd ..")
+    print("====================================================================================")
+    print("[================================= HttpX Start =================================]")
+    print("====================================================================================")
+    os.system("cat dnsx_result.txt | httpx-toolkit -silent -probe -ip -server -fr -ct -cname -title -status-code | tee Subdomains/alive-subdomains2.txt ")
+    print("====================================================================================")
+    print("[================================= HttpX Done =================================]")
+    print("====================================================================================")
+
+
+
+
+
 subdomains()
 merge_data()
 check_alive()
+last()
